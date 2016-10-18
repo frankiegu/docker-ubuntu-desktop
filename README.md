@@ -11,5 +11,8 @@ docker build --rm -t frankie/ubuntu-desktop docker-ubuntu-desktop
 ```
 
 and then connect to:
+```
+docker run -p 5901:5901 -it frankie/ubuntu-desktop /bin/bash
+```
 
 `vnc://<host>:5901` via VNC client.

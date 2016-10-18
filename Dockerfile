@@ -9,8 +9,8 @@ ENV SCALA_HOME /usr/local/share/scala
 ENV SCALA_VERSION 2.11.8
 ENV SBT_VERSION 0.13.8
 ENV SBT_HOME /usr/local/share/sbt
-ENV HOME /home/developer
-ENV GOPATH /home/developer/go
+ENV HOME /root
+ENV GOPATH /usr/local/share/go
 ENV PATH $PATH:${GOPATH}/bin:${SCALA_HOME}/bin:${MAVEN_HOME}/bin:${SBT_HOME}/bin
 
 
@@ -44,7 +44,7 @@ RUN rm ${java_archive}
 RUN echo 'Downloading Go 1.6.3' && \
     wget https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz -O /tmp/go.tar.gz -q && \
     echo 'Installing Go 1.6.3' && \
-    tar -zxf /tmp/go.tar.gz -C /usr/local/ && \
+    tar -zxf /tmp/go.tar.gz -C $GOPATH && \
     rm -f /tmp/go.tar.gz
 
 
@@ -54,7 +54,7 @@ RUN echo 'Installing Scala' && \
     rm scala-$SCALA_VERSION.tgz && \
     mv scala-$SCALA_VERSION $SCALA_HOME
 
-RUN curl -sL "http://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local/share && \
+RUN curl -sL "http://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C $SBT_HOME && \
     echo -ne "- with sbt $SBT_VERSION\n" >> /root/.built
 
 ADD xstartup /root/.vnc/xstartup
