@@ -54,7 +54,8 @@ RUN echo 'Installing Scala' && \
     rm scala-$SCALA_VERSION.tgz && \
     mv scala-$SCALA_VERSION $SCALA_HOME
 
-RUN curl -sL "http://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C $SBT_HOME && \
+RUN mkdir -p $SBT_HOME && \
+    curl -sL "http://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C $SBT_HOME && \
     echo -ne "- with sbt $SBT_VERSION\n" >> /root/.built
 
 ADD xstartup /root/.vnc/xstartup
