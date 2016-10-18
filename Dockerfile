@@ -42,11 +42,11 @@ RUN update-alternatives --install /usr/bin/java java ${java_name}/bin/java 0
 RUN rm ${java_archive}
 
 RUN echo 'Downloading Go 1.6.3' && \
-    wget https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz -O /tmp/go.tar.gz -q && \
+    wget https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz -O go.tar.gz -q && \
     echo 'Installing Go 1.6.3' && \
-    tar -zxf /tmp/go.tar.gz -C $GOPATH && \
-    rm -f /tmp/go.tar.gz
-
+    tar -zxf go.tar.gz && \
+    mv go $GOPATH && \
+    rm -f go.tar.gz
 
 RUN echo 'Installing Scala' && \
     wget --quiet http://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz && \
