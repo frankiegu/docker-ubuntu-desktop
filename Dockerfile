@@ -26,7 +26,14 @@ RUN echo "deb-src http://mirrors.163.com/ubuntu/ xenial-backports main restricte
 RUN apt-get clean && apt-get update && \
     apt-get install -y --no-install-recommends wget curl vim ubuntu-desktop && \
     apt-get install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal && \
-    apt-get install -y tightvncserver && \
+    apt-get install -y inotify-tools \
+    postgresql-9.4 \
+    postgresql-contrib-9.4 \
+    postgresql-9.4-postgis-2.1 \
+    postgresql-client-9.4 \
+    supervisor \
+    tightvncserver && \
+    rm -rf /var/lib/apt/lists/* && \
     mkdir /root/.vnc
 
 ARG java_download_url=http://download.oracle.com/otn-pub/java/jdk/8u101-b13/jdk-8u101-linux-x64.tar.gz
@@ -62,6 +69,43 @@ ADD passwd /root/.vnc/passwd
 
 RUN chmod 600 /root/.vnc/passwd
 
+RUN mkdir -p /var/run/supervisor \
+  && chown -R postgres:postgres /var/run/supervisor
+
+ADD docker-assets/ /
+
+RUN chown postgres:postgres /usr/local/bin/postgres.sh /usr/local/etc/pg_backup.config \
+  && chmod +x /usr/local/bin/postgres.sh \
+  && chmod +x /usr/local/bin/pg_backup.sh \
+  && chmod +x /usr/local/bin/log_watch.sh \
+  && chown -R postgres:postgres /var/run/postgresql /var/backups /usr/local/etc
+
+# Initial default user/pass and schema
+ENV USER postgres
+ENV PASSWORD postgres
+ENV SCHEMA postgres
+ENV POSTGIS false
+ENV ENCODING SQL_ASCII
+
+# Database backup settings
+ENV BACKUP_ENABLED false
+ENV BACKUP_FREQUENCY daily
+
+# TODO implement these
+ENV BACKUP_RETENTION 7
+ENV BACKUP_EMAIL postgres
+ENV ENVIRONMENT development
+
+RUN echo "listen_addresses='*'" >> /etc/postgresql/9.4/main/postgresql.conf \
+  && echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.4/main/pg_hba.conf
+
+VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql", "/var/backups"]
+
+RUN touch /var/lib/postgresql/firstrun
+
+EXPOSE 5432
+
 CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 EXPOSE 5901
