@@ -13,7 +13,6 @@ ENV HOME /root
 ENV GOPATH /usr/local/share/go
 ENV PATH $PATH:${GOPATH}/bin:${SCALA_HOME}/bin:${MAVEN_HOME}/bin:${SBT_HOME}/bin
 
-
 RUN echo "deb http://mirrors.163.com/ubuntu/ xenial main restricted universe multiverse" > /etc/apt/sources.list
 RUN echo "deb http://mirrors.163.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "deb http://mirrors.163.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
@@ -27,14 +26,17 @@ RUN apt-get clean && apt-get update && \
     apt-get install -y --no-install-recommends wget curl vim ubuntu-desktop && \
     apt-get install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal && \
     apt-get install -y inotify-tools \
-    postgresql-9.4 \
-    postgresql-contrib-9.4 \
-    postgresql-9.4-postgis-2.1 \
-    postgresql-client-9.4 \
     supervisor \
     tightvncserver && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir /root/.vnc
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt-get update && \
+    apt-get install -y postgresql-9.4 \
+    postgresql-contrib-9.4 \
+    postgresql-client-9.4
 
 ARG java_download_url=http://download.oracle.com/otn-pub/java/jdk/8u101-b13/jdk-8u101-linux-x64.tar.gz
 ARG download_folder=/tmp
