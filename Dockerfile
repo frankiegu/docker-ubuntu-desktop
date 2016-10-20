@@ -28,7 +28,6 @@ RUN apt-get clean && apt-get update && \
     apt-get install -y inotify-tools \
     supervisor \
     tightvncserver && \
-    rm -rf /var/lib/apt/lists/* && \
     mkdir /root/.vnc
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list
@@ -37,6 +36,8 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
     apt-get install -y postgresql-9.4 \
     postgresql-contrib-9.4 \
     postgresql-client-9.4
+
+RUN apt-get clean && apt-get autoclean && apt-get -y autoremove
 
 ARG java_download_url=http://download.oracle.com/otn-pub/java/jdk/8u101-b13/jdk-8u101-linux-x64.tar.gz
 ARG download_folder=/tmp
@@ -106,8 +107,8 @@ VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql", "/var/
 RUN touch /var/lib/postgresql/firstrun
 
 EXPOSE 5432
-
-CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
-
 EXPOSE 5901
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
+
