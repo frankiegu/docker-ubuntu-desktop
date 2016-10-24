@@ -35,7 +35,7 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
     apt-get update && \
     apt-get install -y postgresql-9.4 \
     postgresql-contrib-9.4 \
-    postgresql-client-9.4
+    postgresql-client-9.4 pgadmin3
 
 RUN apt-get clean && apt-get autoclean && apt-get -y autoremove
 
@@ -70,18 +70,13 @@ RUN curl -sL "http://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SB
 ADD xstartup /root/.vnc/xstartup
 ADD passwd /root/.vnc/passwd
 
-RUN chmod 600 /root/.vnc/passwd
+RUN chmod 600 /root/.vnc/passwd && \
+    chmod +x /root/.vnc/xstartup
 
 RUN mkdir -p /var/run/supervisor \
   && chown -R postgres:postgres /var/run/supervisor
 
-ADD docker-assets/ /
-
-RUN chown postgres:postgres /usr/local/bin/postgres.sh /usr/local/etc/pg_backup.config \
-  && chmod +x /usr/local/bin/postgres.sh \
-  && chmod +x /usr/local/bin/pg_backup.sh \
-  && chmod +x /usr/local/bin/log_watch.sh \
-  && chown -R postgres:postgres /var/run/postgresql /var/backups /usr/local/etc
+RUN chown -R postgres:postgres /var/run/postgresql /var/backups /usr/local/etc
 
 # Initial default user/pass and schema
 ENV USER postgres

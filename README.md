@@ -13,10 +13,10 @@ docker build --rm -t frankie/ubuntu-desktop docker-ubuntu-desktop
 To run with customized settings
 
 ```
-docker run -P --name postgres -p 5901:5901 -e USER=foo -e PASSWORD=bar -e SCHEMA=foo -e ENCODING=UTF8 frankie/ubuntu-desktop
+docker run -P --name postgres -p 5901:5901 -e USER=frankie -e PASSWORD=mars -e SCHEMA=mars -e ENCODING=UTF8 frankie/ubuntu-desktop
 ```
 
-This will create a new container with the username and schema of foo encoded in UTF-8 and a password of bar
+This will create a new container with the username and schema of mars encoded in UTF-8 and a password of mars
 
 `vnc://<host>:5901` via VNC client.
 
